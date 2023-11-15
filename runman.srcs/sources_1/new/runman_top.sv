@@ -24,10 +24,10 @@ module runman_top(
     input logic Clk,
     input logic reset_rtl_0,
     
-//    output logic [7:0] hex_segA,
-//    output logic [3:0] hex_gridA,
-//    output logic [7:0] hex_segB,
-//    output logic [3:0] hex_gridB,
+    output logic [7:0] hex_segA,
+    output logic [3:0] hex_gridA,
+    output logic [7:0] hex_segB,
+    output logic [3:0] hex_gridB,
     
     output logic SD_DQ3,
     output logic SD_CLK,
@@ -55,29 +55,42 @@ module runman_top(
         .ram_we(ram_we),         //RAM interface pins
         .ram_address(ram_address),
         .ram_data(ram_data),
-    	.ram_op_begun(test),   //acknowledge from RAM to move to next word
+    	.ram_op_begun(~test),   //acknowledge from RAM to move to next word
 //        .ram_op_begun(~almost_full),   //acknowledge from RAM to move to next word
         .ram_init_error(ram_init_error), //error initializing
         .ram_init_done(ram_init_done),  //done with reading all MAX_RAM_ADDRESS words
         .cs_bo(SD_DQ3), //SD card pins (also make sure to disable USB CS if using DE10-Lite)
         .sclk_o(SD_CLK),
-        .mosi_o(SD_CMD),
-        .miso_i(SD_DQ0)
+        .mosi_o(SD_DQ0),
+        .miso_i(SD_CMD)
     );
     
-//    HexDriver hex_seg_disA(
-//        .clk(Clk),
-//        .reset(reset_rtl_0),
-//        .in({ram_address[15:12], ram_address[11:8], ram_address[7:4], ram_address[3:0]}),
-//        .hex_seg(hex_segA),
-//        .hex_grid(hex_gridA)  
-//    );
-//    HexDriver hex_seg_disB(
-//        .clk(Clk),
-//        .reset(reset_rtl_0),
-//        .in({{ram_init_error, ram_init_done, ram_we, test}, 4'b0011, 4'b0111, 4'b1111}),
-//        .hex_seg(hex_segB),
-//        .hex_grid(hex_gridB)  
-//    );
+    HexDriver hex_seg_disA(
+        .clk(clk_50),
+        .reset(reset_rtl_0),
+        .in({ram_address[15:12], ram_address[11:8], ram_address[7:4], ram_address[3:0]}),
+        .hex_seg(hex_segA),
+        .hex_grid(hex_gridA)  
+    );
+    
+    HexDriver hex_seg_disB(
+        .clk(clk_50),
+        .reset(reset_rtl_0),
+        .in({{ram_init_error, ram_init_done, ram_we, test}, 4'b0011, 4'b0111, 4'b1111}),
+        .hex_seg(hex_segB),
+        .hex_grid(hex_gridB)  
+    );
+    
+    ila_0 ila (
+        .clk(Clk),
+
+        .probe0(clk_50),
+        .probe1(ram_address),
+        .probe2(ram_data),
+        .probe3(sdcard_init_i.state_r),
+        .probe4(sdcard_init_i.state_x),
+        .probe5(sdcard_init_i.sd_busy),
+        .probe6(~reset_rtl_0)
+    );
     
 endmodule

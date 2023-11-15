@@ -70,11 +70,10 @@ proc create_report { reportName command } {
   }
 }
 OPTRACE "clk_wiz_0_synth_1" START { ROLLUP_AUTO }
-set_param chipscope.maxJobs 3
 set_param project.vivado.isBlockSynthRun true
 set_msg_config -msgmgr_mode ooc_run
 OPTRACE "Creating in-memory project" START { }
-create_project -in_memory -part xc7s25csga324-1
+create_project -in_memory -part xc7s50csga324-1
 
 set_param project.singleFileAddWarning.threshold 0
 set_param project.compositeFile.enableAutoGeneration 0
@@ -115,7 +114,7 @@ if { $cacheID == "" } {
 close [open __synthesis_is_running__ w]
 
 OPTRACE "synth_design" START { }
-synth_design -top clk_wiz_0 -part xc7s25csga324-1 -incremental_mode off -mode out_of_context
+synth_design -top clk_wiz_0 -part xc7s50csga324-1 -incremental_mode off -mode out_of_context
 OPTRACE "synth_design" END { }
 OPTRACE "Write IP Cache" START { }
 
