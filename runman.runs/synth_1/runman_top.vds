@@ -2,8 +2,8 @@
 # Vivado v2022.2 (64-bit)
 # SW Build 3671981 on Fri Oct 14 05:00:03 MDT 2022
 # IP Build 3669848 on Fri Oct 14 08:30:02 MDT 2022
-# Start of session at: Wed Nov 15 16:13:09 2023
-# Process ID: 46800
+# Start of session at: Wed Nov 15 17:05:26 2023
+# Process ID: 51952
 # Current directory: C:/Users/ramseyv2/repos/runman/runman.runs/synth_1
 # Command line: vivado.exe -log runman_top.vds -product Vivado -mode batch -messageDb vivado.pb -notrace -source runman_top.tcl
 # Log file: C:/Users/ramseyv2/repos/runman/runman.runs/synth_1/runman_top.vds
@@ -23,17 +23,17 @@ INFO: [Designutils 20-5440] No compile time benefit to using incremental synthes
 INFO: [Designutils 20-4379] Flow is switching to default flow due to incremental criteria not met. If you would like to alter this behaviour and have the flow terminate instead, please set the following parameter config_implementation {autoIncr.Synth.RejectBehavior Terminate}
 INFO: [Synth 8-7079] Multithreading enabled for synth_design using a maximum of 2 processes.
 INFO: [Synth 8-7078] Launching helper process for spawning children vivado processes
-INFO: [Synth 8-7075] Helper process launched with PID 23292
+INFO: [Synth 8-7075] Helper process launched with PID 48772
 INFO: [Synth 8-11241] undeclared symbol 'REGCCE', assumed default net type 'wire' [C:/Xilinx/Vivado/2022.2/data/verilog/src/unimacro/BRAM_SINGLE_MACRO.v:2170]
-INFO: [Synth 8-11241] undeclared symbol 'ram_we', assumed default net type 'wire' [C:/Users/ramseyv2/repos/runman/runman.srcs/sources_1/new/runman_top.sv:55]
-INFO: [Synth 8-11241] undeclared symbol 'ram_init_error', assumed default net type 'wire' [C:/Users/ramseyv2/repos/runman/runman.srcs/sources_1/new/runman_top.sv:60]
-INFO: [Synth 8-11241] undeclared symbol 'ram_init_done', assumed default net type 'wire' [C:/Users/ramseyv2/repos/runman/runman.srcs/sources_1/new/runman_top.sv:61]
+INFO: [Synth 8-11241] undeclared symbol 'ram_we', assumed default net type 'wire' [C:/Users/ramseyv2/repos/runman/runman.srcs/sources_1/new/runman_top.sv:60]
+INFO: [Synth 8-11241] undeclared symbol 'ram_init_error', assumed default net type 'wire' [C:/Users/ramseyv2/repos/runman/runman.srcs/sources_1/new/runman_top.sv:65]
+INFO: [Synth 8-11241] undeclared symbol 'ram_init_done', assumed default net type 'wire' [C:/Users/ramseyv2/repos/runman/runman.srcs/sources_1/new/runman_top.sv:66]
 ---------------------------------------------------------------------------------
-Starting RTL Elaboration : Time (s): cpu = 00:00:05 ; elapsed = 00:00:05 . Memory (MB): peak = 1839.250 ; gain = 407.965
+Starting RTL Elaboration : Time (s): cpu = 00:00:05 ; elapsed = 00:00:05 . Memory (MB): peak = 1839.438 ; gain = 407.723
 ---------------------------------------------------------------------------------
 INFO: [Synth 8-6157] synthesizing module 'runman_top' [C:/Users/ramseyv2/repos/runman/runman.srcs/sources_1/new/runman_top.sv:23]
-INFO: [Synth 8-6157] synthesizing module 'clk_wiz_0' [C:/Users/ramseyv2/repos/runman/runman.runs/synth_1/.Xil/Vivado-46800-ECEB-3022-14/realtime/clk_wiz_0_stub.v:5]
-INFO: [Synth 8-6155] done synthesizing module 'clk_wiz_0' (0#1) [C:/Users/ramseyv2/repos/runman/runman.runs/synth_1/.Xil/Vivado-46800-ECEB-3022-14/realtime/clk_wiz_0_stub.v:5]
+INFO: [Synth 8-6157] synthesizing module 'clk_wiz_0' [C:/Users/ramseyv2/repos/runman/runman.runs/synth_1/.Xil/Vivado-51952-ECEB-3022-14/realtime/clk_wiz_0_stub.v:5]
+INFO: [Synth 8-6155] done synthesizing module 'clk_wiz_0' (0#1) [C:/Users/ramseyv2/repos/runman/runman.runs/synth_1/.Xil/Vivado-51952-ECEB-3022-14/realtime/clk_wiz_0_stub.v:5]
 INFO: [Synth 8-6157] synthesizing module 'sdcard_init' [C:/Users/ramseyv2/repos/runman/runman.srcs/sources_1/imports/new/sdcard_init.sv:18]
 INFO: [Synth 8-638] synthesizing module 'SdCardCtrl' [C:/Users/ramseyv2/repos/runman/runman.srcs/sources_1/imports/new/SDCard.vhd:196]
 INFO: [Synth 8-256] done synthesizing module 'SdCardCtrl' (0#1) [C:/Users/ramseyv2/repos/runman/runman.srcs/sources_1/imports/new/SDCard.vhd:196]
@@ -49,29 +49,30 @@ INFO: [Synth 8-6155] done synthesizing module 'nibble_to_hex' (0#1) [C:/Users/ra
 INFO: [Synth 8-6157] synthesizing module 'nibble_to_hex' [C:/Users/ramseyv2/repos/runman/runman.srcs/sources_1/imports/design_source/hex.sv:11]
 INFO: [Synth 8-6155] done synthesizing module 'nibble_to_hex' (0#1) [C:/Users/ramseyv2/repos/runman/runman.srcs/sources_1/imports/design_source/hex.sv:11]
 INFO: [Synth 8-6155] done synthesizing module 'HexDriver' (0#1) [C:/Users/ramseyv2/repos/runman/runman.srcs/sources_1/imports/design_source/hex.sv:1]
-WARNING: [Synth 8-4446] all outputs are unconnected for this instance and logic may be removed [C:/Users/ramseyv2/repos/runman/runman.srcs/sources_1/new/runman_top.sv:84]
-INFO: [Synth 8-6157] synthesizing module 'ila_0' [C:/Users/ramseyv2/repos/runman/runman.runs/synth_1/.Xil/Vivado-46800-ECEB-3022-14/realtime/ila_0_stub.v:5]
-INFO: [Synth 8-6155] done synthesizing module 'ila_0' (0#1) [C:/Users/ramseyv2/repos/runman/runman.runs/synth_1/.Xil/Vivado-46800-ECEB-3022-14/realtime/ila_0_stub.v:5]
+WARNING: [Synth 8-4446] all outputs are unconnected for this instance and logic may be removed [C:/Users/ramseyv2/repos/runman/runman.srcs/sources_1/new/runman_top.sv:89]
+INFO: [Synth 8-6157] synthesizing module 'ila_0' [C:/Users/ramseyv2/repos/runman/runman.runs/synth_1/.Xil/Vivado-51952-ECEB-3022-14/realtime/ila_0_stub.v:5]
+INFO: [Synth 8-6155] done synthesizing module 'ila_0' (0#1) [C:/Users/ramseyv2/repos/runman/runman.runs/synth_1/.Xil/Vivado-51952-ECEB-3022-14/realtime/ila_0_stub.v:5]
 INFO: [Synth 8-6155] done synthesizing module 'runman_top' (0#1) [C:/Users/ramseyv2/repos/runman/runman.srcs/sources_1/new/runman_top.sv:23]
-INFO: [Synth 8-6071] Mark debug on the nets applies keep_hierarchy on instance 'clk_wiz'. This will prevent further optimization [C:/Users/ramseyv2/repos/runman/runman.srcs/sources_1/new/runman_top.sv:43]
-INFO: [Synth 8-6071] Mark debug on the nets applies keep_hierarchy on instance 'ila'. This will prevent further optimization [C:/Users/ramseyv2/repos/runman/runman.srcs/sources_1/new/runman_top.sv:84]
-INFO: [Synth 8-6071] Mark debug on the nets applies keep_hierarchy on instance 'hex_seg_disB'. This will prevent further optimization [C:/Users/ramseyv2/repos/runman/runman.srcs/sources_1/new/runman_top.sv:76]
-INFO: [Synth 8-6071] Mark debug on the nets applies keep_hierarchy on instance 'hex_seg_disA'. This will prevent further optimization [C:/Users/ramseyv2/repos/runman/runman.srcs/sources_1/new/runman_top.sv:68]
-INFO: [Synth 8-6071] Mark debug on the nets applies keep_hierarchy on instance 'sdcard_init_i'. This will prevent further optimization [C:/Users/ramseyv2/repos/runman/runman.srcs/sources_1/new/runman_top.sv:52]
-WARNING: [Synth 8-3848] Net SD_CMD in module/entity runman_top does not have driver. [C:/Users/ramseyv2/repos/runman/runman.srcs/sources_1/new/runman_top.sv:35]
+INFO: [Synth 8-6071] Mark debug on the nets applies keep_hierarchy on instance 'clk_wiz'. This will prevent further optimization [C:/Users/ramseyv2/repos/runman/runman.srcs/sources_1/new/runman_top.sv:47]
+INFO: [Synth 8-6071] Mark debug on the nets applies keep_hierarchy on instance 'ila'. This will prevent further optimization [C:/Users/ramseyv2/repos/runman/runman.srcs/sources_1/new/runman_top.sv:89]
+INFO: [Synth 8-6071] Mark debug on the nets applies keep_hierarchy on instance 'hex_seg_disB'. This will prevent further optimization [C:/Users/ramseyv2/repos/runman/runman.srcs/sources_1/new/runman_top.sv:81]
+INFO: [Synth 8-6071] Mark debug on the nets applies keep_hierarchy on instance 'hex_seg_disA'. This will prevent further optimization [C:/Users/ramseyv2/repos/runman/runman.srcs/sources_1/new/runman_top.sv:73]
+INFO: [Synth 8-6071] Mark debug on the nets applies keep_hierarchy on instance 'sdcard_init_i'. This will prevent further optimization [C:/Users/ramseyv2/repos/runman/runman.srcs/sources_1/new/runman_top.sv:57]
+WARNING: [Synth 8-3848] Net SD_DQ0 in module/entity runman_top does not have driver. [C:/Users/ramseyv2/repos/runman/runman.srcs/sources_1/new/runman_top.sv:34]
+WARNING: [Synth 8-3848] Net locked in module/entity runman_top does not have driver. [C:/Users/ramseyv2/repos/runman/runman.srcs/sources_1/new/runman_top.sv:39]
 ---------------------------------------------------------------------------------
-Finished RTL Elaboration : Time (s): cpu = 00:00:06 ; elapsed = 00:00:07 . Memory (MB): peak = 1945.582 ; gain = 514.297
+Finished RTL Elaboration : Time (s): cpu = 00:00:06 ; elapsed = 00:00:07 . Memory (MB): peak = 1945.371 ; gain = 513.656
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Handling Custom Attributes
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Handling Custom Attributes : Time (s): cpu = 00:00:06 ; elapsed = 00:00:07 . Memory (MB): peak = 1963.504 ; gain = 532.219
+Finished Handling Custom Attributes : Time (s): cpu = 00:00:06 ; elapsed = 00:00:07 . Memory (MB): peak = 1945.371 ; gain = 513.656
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished RTL Optimization Phase 1 : Time (s): cpu = 00:00:06 ; elapsed = 00:00:07 . Memory (MB): peak = 1963.504 ; gain = 532.219
+Finished RTL Optimization Phase 1 : Time (s): cpu = 00:00:06 ; elapsed = 00:00:07 . Memory (MB): peak = 1945.371 ; gain = 513.656
 ---------------------------------------------------------------------------------
-Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.017 . Memory (MB): peak = 1963.504 ; gain = 0.000
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.017 . Memory (MB): peak = 1945.371 ; gain = 0.000
 INFO: [Project 1-570] Preparing netlist for logic optimization
 
 Processing XDC Constraints
@@ -113,23 +114,23 @@ INFO: [Project 1-236] Implementation specific constraints were found while readi
 Resolution: To avoid this warning, move constraints listed in [.Xil/runman_top_propImpl.xdc] to another XDC file and exclude this new file from synthesis with the used_in_synthesis property (File Properties dialog in GUI) and re-run elaboration/synthesis.
 Completed Processing XDC Constraints
 
-Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 2076.211 ; gain = 0.000
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.001 . Memory (MB): peak = 2035.875 ; gain = 0.000
 INFO: [Project 1-111] Unisim Transformation Summary:
 No Unisim elements were transformed.
 
-Constraint Validation Runtime : Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.006 . Memory (MB): peak = 2076.211 ; gain = 0.000
+Constraint Validation Runtime : Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.007 . Memory (MB): peak = 2035.875 ; gain = 0.000
 INFO: [Designutils 20-5440] No compile time benefit to using incremental synthesis; A full resynthesis will be run
 INFO: [Designutils 20-4379] Flow is switching to default flow due to incremental criteria not met. If you would like to alter this behaviour and have the flow terminate instead, please set the following parameter config_implementation {autoIncr.Synth.RejectBehavior Terminate}
 INFO: [Synth 8-11241] undeclared symbol 'REGCCE', assumed default net type 'wire' [C:/Xilinx/Vivado/2022.2/data/verilog/src/unimacro/BRAM_SINGLE_MACRO.v:2170]
 ---------------------------------------------------------------------------------
-Finished Constraint Validation : Time (s): cpu = 00:00:13 ; elapsed = 00:00:14 . Memory (MB): peak = 2076.211 ; gain = 644.926
+Finished Constraint Validation : Time (s): cpu = 00:00:13 ; elapsed = 00:00:14 . Memory (MB): peak = 2035.875 ; gain = 604.160
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Loading Part and Timing Information
 ---------------------------------------------------------------------------------
 Loading part: xc7s50csga324-1
 ---------------------------------------------------------------------------------
-Finished Loading Part and Timing Information : Time (s): cpu = 00:00:13 ; elapsed = 00:00:14 . Memory (MB): peak = 2076.211 ; gain = 644.926
+Finished Loading Part and Timing Information : Time (s): cpu = 00:00:13 ; elapsed = 00:00:14 . Memory (MB): peak = 2035.875 ; gain = 604.160
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Applying 'set_property' XDC Constraints
@@ -139,11 +140,11 @@ Applied set_property CLOCK_BUFFER_TYPE = NONE for Clk. (constraint file  c:/User
 Applied set_property KEEP_HIERARCHY = SOFT for clk_wiz. (constraint file  auto generated constraint).
 Applied set_property KEEP_HIERARCHY = SOFT for ila. (constraint file  auto generated constraint).
 ---------------------------------------------------------------------------------
-Finished applying 'set_property' XDC Constraints : Time (s): cpu = 00:00:13 ; elapsed = 00:00:14 . Memory (MB): peak = 2076.211 ; gain = 644.926
+Finished applying 'set_property' XDC Constraints : Time (s): cpu = 00:00:13 ; elapsed = 00:00:14 . Memory (MB): peak = 2035.875 ; gain = 604.160
 ---------------------------------------------------------------------------------
 INFO: [Synth 8-802] inferred FSM for state register 'state_r_reg' in module 'sdcard_init'
 ---------------------------------------------------------------------------------
-Finished RTL Optimization Phase 2 : Time (s): cpu = 00:00:14 ; elapsed = 00:00:15 . Memory (MB): peak = 2076.211 ; gain = 644.926
+Finished RTL Optimization Phase 2 : Time (s): cpu = 00:00:14 ; elapsed = 00:00:15 . Memory (MB): peak = 2035.875 ; gain = 604.160
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start RTL Component Statistics 
@@ -213,7 +214,7 @@ Start Cross Boundary and Area Optimization
 ---------------------------------------------------------------------------------
 WARNING: [Synth 8-7080] Parallel synthesis criteria is not met
 ---------------------------------------------------------------------------------
-Finished Cross Boundary and Area Optimization : Time (s): cpu = 00:00:18 ; elapsed = 00:00:19 . Memory (MB): peak = 2076.211 ; gain = 644.926
+Finished Cross Boundary and Area Optimization : Time (s): cpu = 00:00:16 ; elapsed = 00:00:17 . Memory (MB): peak = 2035.875 ; gain = 604.160
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start ROM, RAM, DSP, Shift Register and Retiming Reporting
@@ -238,19 +239,19 @@ Finished ROM, RAM, DSP, Shift Register and Retiming Reporting
 Start Applying XDC Timing Constraints
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Applying XDC Timing Constraints : Time (s): cpu = 00:00:22 ; elapsed = 00:00:24 . Memory (MB): peak = 2076.211 ; gain = 644.926
+Finished Applying XDC Timing Constraints : Time (s): cpu = 00:00:20 ; elapsed = 00:00:22 . Memory (MB): peak = 2035.875 ; gain = 604.160
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Timing Optimization
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Timing Optimization : Time (s): cpu = 00:00:24 ; elapsed = 00:00:26 . Memory (MB): peak = 2076.211 ; gain = 644.926
+Finished Timing Optimization : Time (s): cpu = 00:00:21 ; elapsed = 00:00:23 . Memory (MB): peak = 2035.875 ; gain = 604.160
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Technology Mapping
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Technology Mapping : Time (s): cpu = 00:00:25 ; elapsed = 00:00:26 . Memory (MB): peak = 2076.211 ; gain = 644.926
+Finished Technology Mapping : Time (s): cpu = 00:00:21 ; elapsed = 00:00:23 . Memory (MB): peak = 2035.875 ; gain = 604.160
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start IO Insertion
@@ -267,40 +268,39 @@ Start Final Netlist Cleanup
 ---------------------------------------------------------------------------------
 Finished Final Netlist Cleanup
 ---------------------------------------------------------------------------------
-WARNING: [Synth 8-3295] tying undriven pin sdcard_init_i:miso_i to constant 0
-WARNING: [Synth 8-5396] Clock pin C has keep related attribute (keep/mark_debug/dont_touch) which could create extra logic on its net [C:/Users/ramseyv2/repos/runman/runman.srcs/sources_1/imports/new/SDCard.vhd:333]
+WARNING: [Synth 8-5396] Clock pin C has keep related attribute (keep/mark_debug/dont_touch) which could create extra logic on its net [C:/Users/ramseyv2/repos/runman/runman.srcs/sources_1/imports/new/sdcard_init.sv:75]
 ---------------------------------------------------------------------------------
-Finished IO Insertion : Time (s): cpu = 00:00:28 ; elapsed = 00:00:30 . Memory (MB): peak = 2076.211 ; gain = 644.926
+Finished IO Insertion : Time (s): cpu = 00:00:24 ; elapsed = 00:00:27 . Memory (MB): peak = 2035.875 ; gain = 604.160
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Renaming Generated Instances
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Renaming Generated Instances : Time (s): cpu = 00:00:28 ; elapsed = 00:00:30 . Memory (MB): peak = 2076.211 ; gain = 644.926
+Finished Renaming Generated Instances : Time (s): cpu = 00:00:24 ; elapsed = 00:00:27 . Memory (MB): peak = 2035.875 ; gain = 604.160
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Rebuilding User Hierarchy
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Rebuilding User Hierarchy : Time (s): cpu = 00:00:28 ; elapsed = 00:00:30 . Memory (MB): peak = 2076.211 ; gain = 644.926
+Finished Rebuilding User Hierarchy : Time (s): cpu = 00:00:24 ; elapsed = 00:00:27 . Memory (MB): peak = 2035.875 ; gain = 604.160
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Renaming Generated Ports
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Renaming Generated Ports : Time (s): cpu = 00:00:28 ; elapsed = 00:00:30 . Memory (MB): peak = 2076.211 ; gain = 644.926
+Finished Renaming Generated Ports : Time (s): cpu = 00:00:24 ; elapsed = 00:00:27 . Memory (MB): peak = 2035.875 ; gain = 604.160
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Handling Custom Attributes
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Handling Custom Attributes : Time (s): cpu = 00:00:28 ; elapsed = 00:00:30 . Memory (MB): peak = 2076.211 ; gain = 644.926
+Finished Handling Custom Attributes : Time (s): cpu = 00:00:24 ; elapsed = 00:00:27 . Memory (MB): peak = 2035.875 ; gain = 604.160
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Renaming Generated Nets
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Renaming Generated Nets : Time (s): cpu = 00:00:28 ; elapsed = 00:00:30 . Memory (MB): peak = 2076.211 ; gain = 644.926
+Finished Renaming Generated Nets : Time (s): cpu = 00:00:24 ; elapsed = 00:00:27 . Memory (MB): peak = 2035.875 ; gain = 604.160
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Writing Synthesis Report
@@ -320,43 +320,36 @@ Report Cell Usage:
 +------+--------+------+
 |1     |clk_wiz |     1|
 |2     |ila     |     1|
-|3     |CARRY4  |    25|
-|4     |LUT1    |     4|
-|5     |LUT2    |    22|
-|6     |LUT3    |    50|
-|7     |LUT4    |    74|
-|8     |LUT5    |    68|
-|9     |LUT6    |   173|
-|10    |FDRE    |   234|
-|11    |FDSE    |     3|
-|12    |IBUF    |     1|
-|13    |OBUF    |    27|
-|14    |OBUFT   |     1|
+|3     |LUT1    |    26|
+|4     |LUT5    |     4|
+|5     |LUT6    |     5|
+|6     |FDRE    |    10|
+|7     |IBUF    |     1|
+|8     |OBUF    |    27|
+|9     |OBUFT   |     1|
 +------+--------+------+
 ---------------------------------------------------------------------------------
-Finished Writing Synthesis Report : Time (s): cpu = 00:00:28 ; elapsed = 00:00:30 . Memory (MB): peak = 2076.211 ; gain = 644.926
+Finished Writing Synthesis Report : Time (s): cpu = 00:00:24 ; elapsed = 00:00:27 . Memory (MB): peak = 2035.875 ; gain = 604.160
 ---------------------------------------------------------------------------------
-Synthesis finished with 0 errors, 0 critical warnings and 3 warnings.
-Synthesis Optimization Runtime : Time (s): cpu = 00:00:21 ; elapsed = 00:00:29 . Memory (MB): peak = 2076.211 ; gain = 532.219
-Synthesis Optimization Complete : Time (s): cpu = 00:00:29 ; elapsed = 00:00:31 . Memory (MB): peak = 2076.211 ; gain = 644.926
+Synthesis finished with 0 errors, 0 critical warnings and 2 warnings.
+Synthesis Optimization Runtime : Time (s): cpu = 00:00:17 ; elapsed = 00:00:25 . Memory (MB): peak = 2035.875 ; gain = 513.656
+Synthesis Optimization Complete : Time (s): cpu = 00:00:25 ; elapsed = 00:00:27 . Memory (MB): peak = 2035.875 ; gain = 604.160
 INFO: [Project 1-571] Translating synthesized netlist
-Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.006 . Memory (MB): peak = 2076.211 ; gain = 0.000
-INFO: [Netlist 29-17] Analyzing 25 Unisim elements for replacement
-INFO: [Netlist 29-28] Unisim Transformation completed in 0 CPU seconds
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.001 . Memory (MB): peak = 2035.875 ; gain = 0.000
 INFO: [Project 1-570] Preparing netlist for logic optimization
 INFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).
-Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 2076.211 ; gain = 0.000
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 2035.875 ; gain = 0.000
 INFO: [Project 1-111] Unisim Transformation Summary:
 No Unisim elements were transformed.
 
-Synth Design complete, checksum: e1a209d5
+Synth Design complete, checksum: db614b4d
 INFO: [Common 17-83] Releasing license: Synthesis
-53 Infos, 28 Warnings, 1 Critical Warnings and 0 Errors encountered.
+51 Infos, 28 Warnings, 1 Critical Warnings and 0 Errors encountered.
 synth_design completed successfully
-synth_design: Time (s): cpu = 00:00:31 ; elapsed = 00:00:36 . Memory (MB): peak = 2076.211 ; gain = 1019.328
+synth_design: Time (s): cpu = 00:00:27 ; elapsed = 00:00:32 . Memory (MB): peak = 2035.875 ; gain = 977.996
 INFO: [Common 17-600] The following parameters have non-default value.
 tcl.collectionResultDisplayLimit
 INFO: [runtcl-6] Synthesis results are not added to the cache due to CRITICAL_WARNING
 INFO: [Common 17-1381] The checkpoint 'C:/Users/ramseyv2/repos/runman/runman.runs/synth_1/runman_top.dcp' has been generated.
 INFO: [runtcl-4] Executing : report_utilization -file runman_top_utilization_synth.rpt -pb runman_top_utilization_synth.pb
-INFO: [Common 17-206] Exiting Vivado at Wed Nov 15 16:13:57 2023...
+INFO: [Common 17-206] Exiting Vivado at Wed Nov 15 17:06:10 2023...
