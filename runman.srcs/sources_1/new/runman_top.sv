@@ -31,18 +31,17 @@ module runman_top(
     
     output logic SD_DQ3,
     output logic SD_CLK,
-    output logic SD_DQ0,
+    input logic SD_DQ0,
     output logic SD_CMD
 );
 
     logic clk_50;
-    logic locked;
     logic test;
     assign test = 1'b1;
     logic reset_locked;
     logic clock_locked;
     
-    assign reset_locked = reset_rtl_0 || ~locked;
+    assign reset_locked = reset_rtl_0 || ~clock_locked;
     
     clk_wiz_0 clk_wiz(
         .reset(reset_rtl_0),
