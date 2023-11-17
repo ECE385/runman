@@ -93,10 +93,14 @@ module runman_top(
 
 ///// I22 State machine
     logic [31:0] data;
-
     logic [4:0] bit_counter;
 
+    logic [4:0] data_idx;
+    assign data_idx = {~bit_counter[4], 4'd15 - bit_counter[3:0]};
+
     always_ff @ (posedge clk_32fs) begin
+        fifo_rd_en <= 0;
+
         if(reset_locked) begin
             bit_counter <= 0;
 
@@ -105,7 +109,7 @@ module runman_top(
         end else begin
             bit_counter <= bit_counter + 1;
 
-            I2S_data <= data[{~bit_counter[4], bit_counter[3:0]}];
+            I2S_data <= data[data_idx];
             I2S_lrck <= bit_counter[4];
 
             if(bit_counter[3:0] == 4'd15) I2S_lrck <= ~bit_counter[4];
@@ -168,13 +172,13 @@ module runman_top(
         .clk(Clk),
 
         .probe0(clk_50),
-        .probe1(ram_address),
-        .probe2(ram_data),
+        .probe1(data),
+        .probe2({I2S_data, bit_counter, data_idx}), //
         .probe3(sdcard_init_i.state_r),
         .probe4(sdcard_init_i.state_x),
         .probe5(sdcard_init_i.sd_busy),
         .probe6(sdcard_init_i.wr_en),
-        .probe7({fifo_empty, sdcard_init_i.prog_full, sdcard_init_i.full}),
+        .probe7({fifo_empty, sdcard_init_i.prog_full, sdcard_init_i.full, clk_32fs, clk_128fs, I2S_lrck}), //
         .probe8(fifo_rd_en),
         .probe9(fifo_dout)
     );

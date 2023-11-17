@@ -74,7 +74,7 @@ SdCardCtrl m_sdcard ( .clk_i(clk50),
 							 .miso_i(miso_i));
 
 logic wr_en;
-logic full, prog_full;
+logic full, empty, prog_full;
 logic wr_rst_busy, rd_rst_busy;
 
 fifo_generator_0 audio_buf (
@@ -86,8 +86,9 @@ fifo_generator_0 audio_buf (
 	.rd_en(fifo_rd_en),              // input wire rd_en
 	.dout(fifo_dout),                // output wire [15 : 0] dout
 	.full(full),                // output wire full
-	.empty(fifo_empty),              // output wire empty
+	.empty(empty),              // output wire empty
 	.prog_full(prog_full),      // output wire prog_full
+	.prog_empty(fifo_empty),      // output wire prog_empty
 	.wr_rst_busy(wr_rst_busy),  // output wire wr_rst_busy
 	.rd_rst_busy(rd_rst_busy)  // output wire rd_rst_busy
 );						 
