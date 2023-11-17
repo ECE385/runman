@@ -61,7 +61,7 @@ module runman_top(
     assign JA2_P = I2S_data;
     assign JA2_N = I2S_lrck;
 
-    assign JAB_0 = Reset;
+    assign JAB_0 = reset_rtl_0;
     assign JAB_1 = clk_128fs;
     assign JAB_2 = clk_32fs;
     assign JAB_3 = 1'bz;
@@ -99,9 +99,8 @@ module runman_top(
     always_ff @ (posedge clk_32fs) begin
         if(reset_locked) begin
             bit_counter <= 0;
-            pos_counter <= 0;
 
-            I2S_data <= data[0];
+            I2S_data <= 0;
             I2S_lrck <= 0;
         end else begin
             bit_counter <= bit_counter + 1;
@@ -175,8 +174,8 @@ module runman_top(
         .probe4(sdcard_init_i.state_x),
         .probe5(sdcard_init_i.sd_busy),
         .probe6(sdcard_init_i.wr_en),
-        .probe7(sdcard_init_i.addr_counter),
-        .probe8(sdcard_init_i.rd_en),
+        .probe7({fifo_empty, sdcard_init_i.prog_full, sdcard_init_i.full}),
+        .probe8(fifo_rd_en),
         .probe9(fifo_dout)
     );
     
