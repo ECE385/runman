@@ -2,12 +2,12 @@ create_clock -period 10.000 -name clk_100 -waveform {0.000 5.000} [get_ports Clk
 
 set_property IOSTANDARD LVCMOS33 [get_ports Clk]
 set_property IOSTANDARD LVCMOS25 [get_ports reset_rtl_0]
-set_property IOSTANDARD LVCMOS33 [get_ports uart_rtl_0_rxd]
-set_property IOSTANDARD LVCMOS33 [get_ports uart_rtl_0_txd]
 set_property PACKAGE_PIN N15 [get_ports Clk]
 set_property PACKAGE_PIN J2 [get_ports reset_rtl_0]
-set_property PACKAGE_PIN B16 [get_ports uart_rtl_0_rxd]
-set_property PACKAGE_PIN A16 [get_ports uart_rtl_0_txd]
+# set_property IOSTANDARD LVCMOS33 [get_ports uart_rtl_0_rxd]
+# set_property IOSTANDARD LVCMOS33 [get_ports uart_rtl_0_txd]
+# set_property PACKAGE_PIN B16 [get_ports uart_rtl_0_rxd]
+# set_property PACKAGE_PIN A16 [get_ports uart_rtl_0_txd]
 
 
 set_property IOSTANDARD LVCMOS25 [get_ports {hex_gridA[3]}]
@@ -62,16 +62,16 @@ set_property PACKAGE_PIN H5 [get_ports {hex_gridB[3]}]
 
 
 #HDMI Signals
-set_property -dict { PACKAGE_PIN V17   IOSTANDARD TMDS_33 } [get_ports {hdmi_tmds_clk_n}]
-set_property -dict { PACKAGE_PIN U16   IOSTANDARD TMDS_33 } [get_ports {hdmi_tmds_clk_p}]
+# set_property -dict { PACKAGE_PIN V17   IOSTANDARD TMDS_33 } [get_ports {hdmi_tmds_clk_n}]
+# set_property -dict { PACKAGE_PIN U16   IOSTANDARD TMDS_33 } [get_ports {hdmi_tmds_clk_p}]
 
-set_property -dict { PACKAGE_PIN U18   IOSTANDARD TMDS_33  } [get_ports {hdmi_tmds_data_n[0]}]
-set_property -dict { PACKAGE_PIN R17   IOSTANDARD TMDS_33  } [get_ports {hdmi_tmds_data_n[1]}]
-set_property -dict { PACKAGE_PIN T14   IOSTANDARD TMDS_33  } [get_ports {hdmi_tmds_data_n[2]}]
+# set_property -dict { PACKAGE_PIN U18   IOSTANDARD TMDS_33  } [get_ports {hdmi_tmds_data_n[0]}]
+# set_property -dict { PACKAGE_PIN R17   IOSTANDARD TMDS_33  } [get_ports {hdmi_tmds_data_n[1]}]
+# set_property -dict { PACKAGE_PIN T14   IOSTANDARD TMDS_33  } [get_ports {hdmi_tmds_data_n[2]}]
 
-set_property -dict { PACKAGE_PIN U17   IOSTANDARD TMDS_33  } [get_ports {hdmi_tmds_data_p[0]}]
-set_property -dict { PACKAGE_PIN R16   IOSTANDARD TMDS_33  } [get_ports {hdmi_tmds_data_p[1]}]
-set_property -dict { PACKAGE_PIN R14   IOSTANDARD TMDS_33  } [get_ports {hdmi_tmds_data_p[2]}]
+# set_property -dict { PACKAGE_PIN U17   IOSTANDARD TMDS_33  } [get_ports {hdmi_tmds_data_p[0]}]
+# set_property -dict { PACKAGE_PIN R16   IOSTANDARD TMDS_33  } [get_ports {hdmi_tmds_data_p[1]}]
+# set_property -dict { PACKAGE_PIN R14   IOSTANDARD TMDS_33  } [get_ports {hdmi_tmds_data_p[2]}]
 
 
 
@@ -93,8 +93,23 @@ set_property PACKAGE_PIN P18 [get_ports SD_CLK]
 set_property PACKAGE_PIN R18 [get_ports SD_CD]
 
 #AUDIO OUTPUT!!!
-set_property IOSTANDARD LVCMOS33 [get_ports SPKL]
-set_property IOSTANDARD LVCMOS33 [get_ports SPKR]
-set_property PACKAGE_PIN B13 [get_ports SPKL]
-set_property PACKAGE_PIN B14 [get_ports SPKR]
+# set_property IOSTANDARD LVCMOS33 [get_ports SPKL]
+# set_property IOSTANDARD LVCMOS33 [get_ports SPKR]
+# set_property PACKAGE_PIN B13 [get_ports SPKL]
+# set_property PACKAGE_PIN B14 [get_ports SPKR]
 
+# PMODx_1, PMODx_2, PMODx_3, PMODx_4
+set_property -dict {PACKAGE_PIN F14 IOSTANDARD LVCMOS33} [get_ports {JA1_P}]
+set_property -dict {PACKAGE_PIN F15 IOSTANDARD LVCMOS33} [get_ports {JA1_N}]
+set_property -dict {PACKAGE_PIN H13 IOSTANDARD LVCMOS33} [get_ports {JA2_P}]
+set_property -dict {PACKAGE_PIN H14 IOSTANDARD LVCMOS33} [get_ports {JA2_N}]
+
+# JAB 2,3 on bank15 with pmod, rest are on bank 16
+set_property -dict {PACKAGE_PIN D11 IOSTANDARD LVCMOS33} [get_ports {JAB_0}]
+set_property -dict {PACKAGE_PIN C12 IOSTANDARD LVCMOS33} [get_ports {JAB_1}]
+set_property -dict {PACKAGE_PIN E16 IOSTANDARD LVCMOS33} [get_ports {JAB_2}]
+set_property -dict {PACKAGE_PIN G16 IOSTANDARD LVCMOS33} [get_ports {JAB_3}]
+set_property -dict {PACKAGE_PIN C11 IOSTANDARD LVCMOS33} [get_ports {JAB_4}]
+set_property -dict {PACKAGE_PIN D10 IOSTANDARD LVCMOS33} [get_ports {JAB_5}]
+
+set_property -dict {PACKAGE_PIN J2 IOSTANDARD LVCMOS25} [get_ports {Reset}]

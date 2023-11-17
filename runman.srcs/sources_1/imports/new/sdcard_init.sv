@@ -27,7 +27,12 @@ module sdcard_init (
 	output logic cs_bo, //SD card pins (also make sure to disable USB CS if using DE10-Lite)
 	output logic sclk_o,
 	output logic mosi_o,
-	input  logic miso_i  
+	input  logic miso_i,
+
+	input logic fifo_rd_en,
+	input logic fifo_rd_clk,
+	output logic [31 : 0] fifo_dout,
+	output logic fifo_empty
 );
 
 parameter 			MAX_RAM_ADDRESS = 25'h3FFFFF;
@@ -67,7 +72,25 @@ SdCardCtrl m_sdcard ( .clk_i(clk50),
 							 .sclk_o(sclk_o),
 							 .mosi_o(mosi_o),
 							 .miso_i(miso_i));
-							 
+
+logic wr_en;
+logic full, prog_full;
+logic wr_rst_busy, rd_rst_busy;
+
+fifo_generator_0 audio_buf (
+	.rst(reset),                  // input wire rst
+	.wr_clk(clk50),            // input wire wr_clk
+	.rd_clk(clk50),            // input wire rd_clk
+	.din(data_r),                  // input wire [15 : 0] din
+	.wr_en(wr_en),              // input wire wr_en
+	.rd_en(fifo_rd_en),              // input wire rd_en
+	.dout(fifo_dout),                // output wire [15 : 0] dout
+	.full(full),                // output wire full
+	.empty(fifo_empty),              // output wire empty
+	.prog_full(prog_full),      // output wire prog_full
+	.wr_rst_busy(wr_rst_busy),  // output wire wr_rst_busy
+	.rd_rst_busy(rd_rst_busy)  // output wire rd_rst_busy
+);						 
 
 always_ff @ (posedge clk50) 
 begin
@@ -83,6 +106,11 @@ begin
 	end
 end
 
+always_comb begin
+	wr_en = 0;
+
+	if(state_r == READL_1 && sd_data_rdy == 1'b0) wr_en = 1;
+end
 
 always_comb 
 begin
@@ -111,7 +139,7 @@ begin
 		READBLOCK: begin //send enable to start block read
 			if (ram_addr_r >= MAX_RAM_ADDRESS) //done with the whole range
 				state_x = DONE;
-			else begin
+			else if(~prog_full) begin
 				sd_read_block = 1'b1; //start block read
 				if (sd_block_addr != 32'h00000000)
 					sd_continue = 1'b1;
@@ -123,7 +151,7 @@ begin
 			if (sd_busy == 1'b0) //busy going low signals end of block, read next block
 				state_x = READBLOCK;
 			else if (sd_data_rdy == 1'b1) begin//still have more data in this block, read more bytes
-				data_x[15:8] = sd_output_data;
+				data_x[7:0] = sd_output_data;
 				state_x = READH_1;
 			end
 		end
@@ -134,7 +162,7 @@ begin
 		end
 		READL_0: begin //read second byte (lower byte)
 			if (sd_data_rdy == 1'b1) begin
-				data_x[7:0] = sd_output_data;
+				data_x[15:8] = sd_output_data;
 				state_x = READL_1;
 			end
 		end
