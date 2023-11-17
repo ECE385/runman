@@ -140,8 +140,11 @@ begin
 		end
 		READL_1: begin //ack second byte
 			sd_data_next = 1'b1;
-			if (sd_data_rdy == 1'b0)//move on to next byte/write word
-				state_x = WRITE;
+			if (sd_data_rdy == 1'b0) begin //move on to next byte/write word
+				// state_x = WRITE;
+				ram_addr_x = ram_addr_r + 1;
+				state_x = READH_0; // Skip write
+			end
 		end
 		WRITE: begin //write 16-bit word, WE=1 and increment ram address for next word
 			ram_we = 1'b1;

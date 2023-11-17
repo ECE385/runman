@@ -80,7 +80,7 @@ module runman_top(
     HexDriver hex_seg_disB(
         .clk(clk_50),
         .reset(reset_locked),
-        .in({{ram_init_error, ram_init_done, ram_we, test}, 4'b0011, 4'b0111, 4'b1111}),
+        .in({ram_data[15:12], ram_data[11:8], ram_data[7:4], ram_data[3:0]}),
         .hex_seg(hex_segB),
         .hex_grid(hex_gridB)  
     );
@@ -94,7 +94,9 @@ module runman_top(
         .probe3(sdcard_init_i.state_r),
         .probe4(sdcard_init_i.state_x),
         .probe5(sdcard_init_i.sd_busy),
-        .probe6(~reset_locked)
+        .probe6(~reset_locked),
+        .probe7(sdcard_init_i.ram_addr_x),
+        .probe8(sdcard_init_i.sd_data_rdy)
     );
     
 endmodule
