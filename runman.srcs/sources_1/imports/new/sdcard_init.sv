@@ -80,10 +80,10 @@ logic wr_rst_busy, rd_rst_busy;
 fifo_generator_0 audio_buf (
 	.rst(reset),                  // input wire rst
 	.wr_clk(clk50),            // input wire wr_clk
-	.rd_clk(clk50),            // input wire rd_clk
+	.rd_clk(fifo_rd_clk),            // input wire rd_clk
 	.din(data_r),                  // input wire [15 : 0] din
-	.wr_en(wr_en),              // input wire wr_en
-	.rd_en(fifo_rd_en),              // input wire rd_en
+	.wr_en(wr_en & !reset),              // input wire wr_en
+	.rd_en(fifo_rd_en & !reset),              // input wire rd_en
 	.dout(fifo_dout),                // output wire [15 : 0] dout
 	.full(full),                // output wire full
 	.empty(empty),              // output wire empty

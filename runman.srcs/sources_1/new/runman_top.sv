@@ -42,16 +42,23 @@ module runman_top(
     logic test;
     assign test = 1'b1;
     logic reset_locked;
-    logic clock_locked;
+    logic clock_50m_locked;
+    logic clock_128fs_locked;
     
-    assign reset_locked = reset_rtl_0 || ~clock_locked;
+    assign reset_locked = reset_rtl_0 || ~clock_50m_locked || ~clock_128fs_locked;
     
-    clk_wiz_0 clk_wiz(
+    clk_wiz_0 clk_wiz_50m(
         .reset(reset_rtl_0),
         .clk_in1(Clk),
         .clk_out1(clk_50),
-        .clk_out2(clk_128fs),
-        .locked(clock_locked)
+        .locked(clock_50m_locked)
+    );
+
+    clk_wiz_1 clk_wiz_128fs (
+        .reset(reset_rtl_0),
+        .clk_in1(Clk),
+        .clk_out1(clk_128fs),
+        .locked(clock_128fs_locked)
     );
 
     logic I2S_bck, I2S_lrck, I2S_data;
@@ -80,7 +87,7 @@ module runman_top(
     always_ff @ (posedge clk_128fs) begin
         clk_div <= ~clk_div;
 
-        if (reset_locked) begin
+        if (reset_rtl_0) begin
             clk_div <= 0;
             clk_32fs <= 0;
         end
@@ -114,9 +121,11 @@ module runman_top(
 
             if(bit_counter[3:0] == 4'd15) I2S_lrck <= ~bit_counter[4];
 
+            // If finished writing word (32 bits), grab next word (2x 16-bit half words, L+R channel)
             if(bit_counter >= 5'h1f) begin
                 bit_counter <= 5'd0;
                 
+                // Load 0 if fifo out of data
                 data <= 0;
                 if(~fifo_empty) begin
                     fifo_rd_en <= 1;
@@ -180,7 +189,8 @@ module runman_top(
         .probe6(sdcard_init_i.wr_en),
         .probe7({fifo_empty, sdcard_init_i.prog_full, sdcard_init_i.full, clk_32fs, clk_128fs, I2S_lrck}), //
         .probe8(fifo_rd_en),
-        .probe9(fifo_dout)
+        .probe9(fifo_dout),
+        .probe10(reset_locked)
     );
     
 endmodule
