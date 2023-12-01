@@ -35,10 +35,18 @@ module runman_top(
     output logic SD_CMD,
 
     output logic JA1_P, JA1_N, JA2_P, JA2_N,
-    output logic JAB_0, JAB_1, JAB_2, JAB_3, JAB_4, JAB_5
+    output logic JAB_0, JAB_1, JAB_2, JAB_3, JAB_4, JAB_5,
+    
+    //HDMI
+    output logic hdmi_tmds_clk_n,
+    output logic hdmi_tmds_clk_p,
+    output logic [2:0]hdmi_tmds_data_n,
+    output logic [2:0]hdmi_tmds_data_p
 );
 
     logic clk_50;
+    logic clk_125MHz;
+    logic clk_25MHz;
     logic test;
     assign test = 1'b1;
     logic reset_locked;
@@ -47,10 +55,13 @@ module runman_top(
     
     assign reset_locked = reset_rtl_0 || ~clock_50m_locked || ~clock_128fs_locked;
     
+    
     clk_wiz_0 clk_wiz_50m(
         .reset(reset_rtl_0),
         .clk_in1(Clk),
         .clk_out1(clk_50),
+        .clk_out2(clk_125MHz),
+        .clk_out3(clk_25MHz),
         .locked(clock_50m_locked)
     );
 
@@ -59,6 +70,83 @@ module runman_top(
         .clk_in1(Clk),
         .clk_out1(clk_128fs),
         .locked(clock_128fs_locked)
+    );
+    
+    logic [9:0] drawX, drawY, song_progress;
+
+    logic hsync, vsync, vde;
+    logic [3:0] red, green, blue;
+    logic reset_ah;
+
+    //VGA Sync signal generator
+    vga_controller vga (
+        .pixel_clk(clk_25MHz),
+        .reset(reset_rtl_0),
+        .hs(hsync),
+        .vs(vsync),
+        .active_nblank(vde),
+        .drawX(drawX),
+        .drawY(drawY)
+    );    
+
+    //Real Digital VGA to HDMI converter
+    hdmi_tx_0 vga_to_hdmi (
+        //Clocking and Reset
+        .pix_clk(clk_25MHz),
+        .pix_clkx5(clk_125MHz),
+        .pix_clk_locked(clock_50m_locked),
+        //Reset is active LOW
+        .rst(reset_rtl_0),
+        //Color and Sync Signals
+        .red(red),
+        .green(green),
+        .blue(blue),
+        .hsync(hsync),
+        .vsync(vsync),
+        .vde(vde),
+        
+        //aux Data (unused)
+        .aux0_din(4'b0),
+        .aux1_din(4'b0),
+        .aux2_din(4'b0),
+        .ade(1'b0),
+        
+        //Differential outputs
+        .TMDS_CLK_P(hdmi_tmds_clk_p),          
+        .TMDS_CLK_N(hdmi_tmds_clk_n),          
+        .TMDS_DATA_P(hdmi_tmds_data_p),         
+        .TMDS_DATA_N(hdmi_tmds_data_n)          
+    );
+    
+//    always_comb begin
+//        if (vsync == 0) begin
+//            if (525 >= song_progress)  begin
+//                song_progress = 0;
+//            end
+//            else begin
+//                song_progress = song_progress + 1;
+//            end
+//        end
+//    end
+
+    always_ff @(posedge vsync) begin
+        if (505 <= song_progress)  begin
+            song_progress <= 0;
+        end
+        else begin
+            song_progress <= song_progress + 1;
+        end
+    end
+   
+    
+    //Color Mapper Module   
+    color_mapper color_instance(
+        .DrawX(drawX),
+        .DrawY(drawY),
+        .song_progress(song_progress),
+        .Red(red),
+        .Green(green),
+        .Blue(blue)
     );
 
     logic I2S_bck, I2S_lrck, I2S_data;
@@ -164,7 +252,7 @@ module runman_top(
     HexDriver hex_seg_disA(
         .clk(clk_50),
         .reset(reset_locked),
-        .in({ram_address[15:12], ram_address[11:8], ram_address[7:4], ram_address[3:0]}),
+        .in({ram_address[15:12], { 2'b0, song_progress[9:8] }, song_progress[7:4], song_progress[3:0]}),
         .hex_seg(hex_segA),
         .hex_grid(hex_gridA)  
     );
