@@ -22,7 +22,7 @@
 
 module runman_top(
     input logic Clk,
-    input logic reset_rtl_0,
+    input logic reset_rtl_0, Play_btn, Next_btn, Prev_btn,
     
     output logic [7:0] hex_segA,
     output logic [3:0] hex_gridA,
@@ -98,6 +98,20 @@ module runman_top(
 
     assign I2S_bck = ~clk_32fs;
 
+///// Buttons
+    logic playing;
+    logic play_btn_sync, play_btn_prev;
+    always_ff @(posedge clk_32fs) begin
+        if(reset_locked) begin
+            playing <= 0;
+        end else begin
+            play_btn_sync <= Play_btn;
+            play_btn_prev <= play_btn_sync;
+
+            if(play_btn_prev != play_btn_sync && play_btn_sync == 1) playing <= ~playing;
+        end
+    end
+
 ///// I22 State machine
     logic [31:0] data;
     logic [4:0] bit_counter;
@@ -127,7 +141,7 @@ module runman_top(
                 
                 // Load 0 if fifo out of data
                 data <= 0;
-                if(~fifo_empty) begin
+                if(~fifo_empty && playing) begin
                     fifo_rd_en <= 1;
                     data <= fifo_dout;
                 end
@@ -184,13 +198,14 @@ module runman_top(
         .probe1(data),
         .probe2({I2S_data, bit_counter, data_idx}), //
         .probe3(sdcard_init_i.state_r),
-        .probe4(sdcard_init_i.state_x),
+        .probe4(sdcard_init_i.ram_addr_r),
         .probe5(sdcard_init_i.sd_busy),
         .probe6(sdcard_init_i.wr_en),
         .probe7({fifo_empty, sdcard_init_i.prog_full, sdcard_init_i.full, clk_32fs, clk_128fs, I2S_lrck}), //
         .probe8(fifo_rd_en),
         .probe9(fifo_dout),
-        .probe10(reset_locked)
+        .probe10(reset_locked),
+        .probe11(sdcard_init_i.TEST_counter)
     );
     
 endmodule

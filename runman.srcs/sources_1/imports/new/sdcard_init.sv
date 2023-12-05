@@ -19,7 +19,7 @@ module sdcard_init (
 	input  logic clk50,
 	input  logic reset,          //starts as soon reset is deasserted
 	output logic ram_we,         //RAM interface pins
-	output logic [24:0] ram_address,
+	output logic [30:0] ram_address,
 	output logic [15:0] ram_data,
 	input  logic ram_op_begun,   //acknowledge from RAM to move to next word
 	output logic ram_init_error, //error initializing
@@ -35,7 +35,7 @@ module sdcard_init (
 	output logic fifo_empty
 );
 
-parameter 			MAX_RAM_ADDRESS = 25'h3FFFFF;
+parameter 			MAX_RAM_ADDRESS = 31'h1E84_8000;
 parameter			SDHC 				 = 1'b1;
 
 logic 				sd_read_block;
@@ -49,7 +49,7 @@ logic [31:0] 		sd_block_addr;
 
 //registers written in 2-always method
 enum logic [8:0]	{RESET, READBLOCK, READL_0, READL_1, READH_0, READH_1, WRITE, ERROR, DONE} state_r, state_x;
-logic [24:0]		ram_addr_r, ram_addr_x;  //word address for memory initialization
+logic [30:0]		ram_addr_r, ram_addr_x;  //word address for memory initialization
 logic [15:0]		data_r, data_x;
 
 //assign primary outputs to correct registers
@@ -91,16 +91,24 @@ fifo_generator_0 audio_buf (
 	.prog_empty(fifo_empty),      // output wire prog_empty
 	.wr_rst_busy(wr_rst_busy),  // output wire wr_rst_busy
 	.rd_rst_busy(rd_rst_busy)  // output wire rd_rst_busy
-);						 
+);
+
+logic [15:0] TEST_counter;						 
 
 always_ff @ (posedge clk50) 
 begin
 	if (reset) begin
 		state_r <= RESET;
-		ram_addr_r <= 25'h0000001;
+		ram_addr_r <= 31'h0000001;
 		data_r <= 16'h0001;
 	end
 	else begin
+		if(state_x == RESET) begin
+			TEST_counter <= 0;
+		end else if((state_x == READH_1 || state_x == READL_1) && state_r != state_x) begin
+			TEST_counter <= TEST_counter + 1;
+		end
+
 		state_r <= state_x;
 		data_r <= data_x;
 		ram_addr_r <= ram_addr_x;
