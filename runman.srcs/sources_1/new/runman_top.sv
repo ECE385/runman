@@ -188,15 +188,46 @@ module runman_top(
 
 ///// Buttons
     logic playing;
-    logic play_btn_sync, play_btn_prev;
+    logic play_btn_ms, play_btn_sync, play_btn_prev; // _ms = metastable
+
+    localparam MAX_TRACK_ID = 7;
+
+    logic [2:0] track_num;
+    logic next_btn_ms, next_btn_sync, next_btn_prev;
+    logic prev_btn_ms, prev_btn_sync, prev_btn_prev;
+
     always_ff @(posedge clk_32fs) begin
         if(reset_locked) begin
             playing <= 0;
+            track_num <= 0;
         end else begin
-            play_btn_sync <= Play_btn;
+            play_btn_ms <= Play_btn;
+            play_btn_sync <= play_btn_ms;
             play_btn_prev <= play_btn_sync;
 
+            next_btn_ms <= Next_btn;
+            next_btn_sync <= next_btn_ms;
+            next_btn_prev <= next_btn_sync;
+
+            prev_btn_ms <= Prev_btn;
+            prev_btn_sync <= prev_btn_ms; 
+            prev_btn_prev <= prev_btn_sync;
+
             if(play_btn_prev != play_btn_sync && play_btn_sync == 1) playing <= ~playing;
+
+            if(next_btn_prev != next_btn_sync && next_btn_sync == 1) begin
+                track_num <= track_num + 1;
+                if (track_num >= MAX_TRACK_ID) track_num <= 0;
+
+                playing <= 1;
+            end
+
+            if(prev_btn_prev != prev_btn_sync && prev_btn_sync == 1) begin
+                track_num <= track_num - 1;
+                if (track_num == 0) track_num <= MAX_TRACK_ID;
+
+                playing <= 1;
+            end
         end
     end
 
@@ -239,7 +270,7 @@ module runman_top(
 
 /////////
     
-    logic [24:0] ram_address;
+    logic [30:0] ram_address;
     logic [15:0] ram_data;
     
     sdcard_init sdcard_init_i(
@@ -257,6 +288,8 @@ module runman_top(
         .mosi_o(SD_CMD),
         .miso_i(SD_DQ0),
 
+        .start_addr(31'h3_0000 * 31'd256 * track_num),
+
         .fifo_rd_en, //input logic 
         .fifo_rd_clk(clk_32fs), //input logic 
         .fifo_dout, //output logic [31 : 0] 
@@ -266,7 +299,7 @@ module runman_top(
     HexDriver hex_seg_disA(
         .clk(clk_50),
         .reset(reset_locked),
-        .in({ram_address[15:12], { 2'b0, song_progress[9:8] }, song_progress[7:4], song_progress[3:0]}),
+        .in({{1'b0, track_num}, { 2'b0, song_progress[9:8] }, song_progress[7:4], song_progress[3:0]}),
         .hex_seg(hex_segA),
         .hex_grid(hex_gridA)  
     );
@@ -293,7 +326,10 @@ module runman_top(
         .probe8(fifo_rd_en),
         .probe9(fifo_dout),
         .probe10(reset_locked),
-        .probe11(sdcard_init_i.TEST_counter)
+        .probe11(sdcard_init_i.TEST_counter),
+        .probe12({prev_btn_sync, prev_btn_prev, next_btn_sync, next_btn_prev, play_btn_sync, play_btn_prev}),
+        .probe13(track_num),
+        .probe14(sdcard_init_i.start_addr)
     );
     
 endmodule

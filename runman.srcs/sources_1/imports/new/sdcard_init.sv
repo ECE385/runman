@@ -29,6 +29,8 @@ module sdcard_init (
 	output logic mosi_o,
 	input  logic miso_i,
 
+	input logic [30:0] start_addr,
+
 	input logic fifo_rd_en,
 	input logic fifo_rd_clk,
 	output logic [31 : 0] fifo_dout,
@@ -48,7 +50,7 @@ logic [7:0] 		sd_output_data;
 logic [31:0] 		sd_block_addr;
 
 //registers written in 2-always method
-enum logic [8:0]	{RESET, READBLOCK, READL_0, READL_1, READH_0, READH_1, WRITE, ERROR, DONE} state_r, state_x;
+enum logic [8:0]	{RESET, READBLOCK, READL_0, READL_1, READH_0, READH_1, WRITE, ERROR, DONE, FLUSHBLK_0, FLUSHBLK_1} state_r, state_x;
 logic [30:0]		ram_addr_r, ram_addr_x;  //word address for memory initialization
 logic [15:0]		data_r, data_x;
 
@@ -78,7 +80,7 @@ logic full, empty, prog_full;
 logic wr_rst_busy, rd_rst_busy;
 
 fifo_generator_0 audio_buf (
-	.rst(reset),                  // input wire rst
+	.rst(reset || reset_counter),                  // input wire rst
 	.wr_clk(clk50),            // input wire wr_clk
 	.rd_clk(fifo_rd_clk),            // input wire rd_clk
 	.din(data_r),                  // input wire [15 : 0] din
@@ -93,16 +95,35 @@ fifo_generator_0 audio_buf (
 	.rd_rst_busy(rd_rst_busy)  // output wire rd_rst_busy
 );
 
-logic [15:0] TEST_counter;						 
+logic [15:0] TEST_counter;
+
+logic [9:0] reset_counter;
+logic [30:0] start_addr_ms, start_addr_sync, start_addr_prev;
 
 always_ff @ (posedge clk50) 
 begin
+	if(reset_counter != 0) reset_counter <= reset_counter - 1;
+	start_addr_ms <= start_addr;
+	start_addr_sync <= start_addr_ms;
+	start_addr_prev <= start_addr_sync;
+
 	if (reset) begin
 		state_r <= RESET;
-		ram_addr_r <= 31'h0000001;
+		ram_addr_r <= start_addr_sync;
 		data_r <= 16'h0001;
+		reset_counter <= 10'd1000;
 	end
-	else begin
+	else if (start_addr_sync != start_addr_prev) begin
+		state_r <= READBLOCK;
+
+		if(state_r == READH_0 || state_r == READL_0) state_r <= FLUSHBLK_0;
+		if(state_r == READH_1 || state_r == READL_1) state_r <= FLUSHBLK_1;
+
+		ram_addr_r <= start_addr_sync;
+		data_r <= 16'h0001;
+		reset_counter <= 10'd1000;
+	end
+	else if (reset_counter == 0) begin
 		if(state_x == RESET) begin
 			TEST_counter <= 0;
 		end else if((state_x == READH_1 || state_x == READL_1) && state_r != state_x) begin
@@ -151,7 +172,7 @@ begin
 			else if(~prog_full) begin
 				sd_read_block = 1'b1; //start block read
 				if (sd_block_addr != 32'h00000000)
-					sd_continue = 1'b1;
+					sd_continue = 0;//1'b1;
 				if (sd_busy == 1'b1)
 					state_x = READH_0;
 			end
@@ -195,6 +216,18 @@ begin
 		end
 		DONE: begin
 			ram_init_done = 1'b1;
+		end
+		FLUSHBLK_0: begin //read first byte (higher byte)
+			if (sd_busy == 1'b0) //busy going low signals end of block, read next block
+				state_x = READBLOCK;
+			else if (sd_data_rdy == 1'b1) begin//still have more data in this block, read more bytes
+				state_x = FLUSHBLK_1;
+			end
+		end
+		FLUSHBLK_1: begin //ack first byte
+			sd_data_next = 1'b1;
+			if (sd_data_rdy == 1'b0)//moved on to next byte
+				state_x = FLUSHBLK_0;
 		end
 	endcase 
 end //end comb
