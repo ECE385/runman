@@ -87,7 +87,15 @@ module runman_top(
         .active_nblank(vde),
         .drawX(drawX),
         .drawY(drawY)
-    );    
+    );   
+     
+    
+    div_gen_0(
+        S_AXIS_DIVISOR(), // 44100 samples a second
+        S_AXIS_DIVIDEND(), // sample #
+        aclk(Clk),
+        M_AXIS_DOUT() // multipy by 505 = song_progress
+    ); 
 
     //Real Digital VGA to HDMI converter
     hdmi_tx_0 vga_to_hdmi (
