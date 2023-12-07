@@ -89,12 +89,13 @@ module runman_top(
         .drawY(drawY)
     );   
      
+    logic dividor_res [39:0];
     
-    div_gen_0(
-        S_AXIS_DIVISOR(), // 44100 samples a second
-        S_AXIS_DIVIDEND(), // sample #
+    div_gen_0 divider(
+        S_AXIS_DIVISOR(44100), // 44100 samples a second
+        S_AXIS_DIVIDEND(total_bits), // sample #
         aclk(Clk),
-        M_AXIS_DOUT() // multipy by 505 = song_progress
+        M_AXIS_DOUT(dividor_res) // multipy by 505 = song_progress
     ); 
 
     //Real Digital VGA to HDMI converter
@@ -138,12 +139,13 @@ module runman_top(
 //    end
 
     always_ff @(posedge vsync) begin
-        if (505 <= song_progress)  begin
-            song_progress <= 0;
-        end
-        else begin
-            song_progress <= song_progress + 1;
-        end
+//        if (505 <= song_progress)  begin
+//            song_progress <= 0;
+//        end
+//        else begin
+//            song_progress <= song_progress + 1;
+//        end
+        song_progress <= dividor_res[25:16];
     end
    
     
@@ -242,6 +244,7 @@ module runman_top(
 ///// I22 State machine
     logic [31:0] data;
     logic [4:0] bit_counter;
+    logic [22:0] total_bits;
 
     logic [4:0] data_idx;
     assign data_idx = {~bit_counter[4], 4'd15 - bit_counter[3:0]};
@@ -251,11 +254,13 @@ module runman_top(
 
         if(reset_locked) begin
             bit_counter <= 0;
+            total_bits <= 0;
 
             I2S_data <= 0;
             I2S_lrck <= 0;
         end else begin
             bit_counter <= bit_counter + 1;
+            total_bits <= total_bits + 1;
 
             I2S_data <= data[data_idx];
             I2S_lrck <= bit_counter[4];
