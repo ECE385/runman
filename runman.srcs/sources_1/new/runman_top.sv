@@ -41,7 +41,9 @@ module runman_top(
     output logic hdmi_tmds_clk_n,
     output logic hdmi_tmds_clk_p,
     output logic [2:0]hdmi_tmds_data_n,
-    output logic [2:0]hdmi_tmds_data_p
+    output logic [2:0]hdmi_tmds_data_p,
+
+    input logic vp_in, vn_in
 );
 
     logic clk_50;
@@ -231,9 +233,37 @@ module runman_top(
         end
     end
 
+////// 
+logic drdy_out;
+logic [15:0] do_out;
+logic [4:0] channel_out;
+logic eoc_out, busy_out;
+
+xadc_wiz_0 vol_adc (
+    .di_in(0),              // input wire [15 : 0] di_in
+    .daddr_in(3),        // input wire [6 : 0] daddr_in
+    .den_in(eoc_out),            // input wire den_in
+    .dwe_in(0),            // input wire dwe_in
+    .drdy_out(drdy_out),        // output wire drdy_out
+    .do_out(do_out),            // output wire [15 : 0] do_out
+    .dclk_in(clk_50),          // input wire dclk_in
+    .reset_in(0),        // input wire reset_in
+    .vp_in(vp_in),              // input wire vp_in
+    .vn_in(vn_in),              // input wire vn_in
+    .channel_out(channel_out),  // output wire [4 : 0] channel_out
+    .eoc_out(eoc_out),          // output wire eoc_out
+    .alarm_out(alarm_out),      // output wire alarm_out
+    .eos_out(eos_out),          // output wire eos_out
+    .busy_out(busy_out)        // output wire busy_out
+);
+
 ///// I22 State machine
     logic [31:0] data;
     logic [4:0] bit_counter;
+
+    logic [11:0] volume_level;
+
+    logic [31:0] song_size;
 
     logic [4:0] data_idx;
     assign data_idx = {~bit_counter[4], 4'd15 - bit_counter[3:0]};
@@ -241,8 +271,12 @@ module runman_top(
     always_ff @ (posedge clk_32fs) begin
         fifo_rd_en <= 0;
 
+        // data_mult[1] <= (fifo_dout[31:16] * 12'hfff);
+        // data_mult[0] <= (fifo_dout[15:0] * volume_level);
+
         if(reset_locked) begin
             bit_counter <= 0;
+            volume_level <= 0;
 
             I2S_data <= 0;
             I2S_lrck <= 0;
@@ -262,7 +296,9 @@ module runman_top(
                 data <= 0;
                 if(~fifo_empty && playing) begin
                     fifo_rd_en <= 1;
-                    data <= fifo_dout;
+                    volume_level <= do_out[15:4];
+                    data[31:16] <= signed'(fifo_dout[31:16]) >>> volume_level[11 -: 4];
+                    data[15:0] <= signed'(fifo_dout[15:0]) >>> volume_level[11 -: 4];
                 end
             end
         end
@@ -329,7 +365,11 @@ module runman_top(
         .probe11(sdcard_init_i.TEST_counter),
         .probe12({prev_btn_sync, prev_btn_prev, next_btn_sync, next_btn_prev, play_btn_sync, play_btn_prev}),
         .probe13(track_num),
-        .probe14(sdcard_init_i.start_addr)
+        .probe14(sdcard_init_i.start_addr),
+        .probe15({do_out, channel_out}),
+        .probe16({drdy_out, eoc_out, busy_out, 2'd0}),
+        .probe17(0/*fifo_dout[31:16] * 12'h800*/),
+        .probe18(0/*{data_mult[1], data_mult[0]}*/)
     );
     
 endmodule
