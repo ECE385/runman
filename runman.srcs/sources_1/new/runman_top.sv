@@ -89,15 +89,17 @@ module runman_top(
         .drawY(drawY)
     );
 
-    logic [47:0] dividor_res;
-    logic [23:0] s_axis_divisor;
+    logic [55:0] dividor_res;
+    logic [31:0] s_axis_divisor;
 
-    assign s_axis_divisor = 44100 * 60 * 3;
+    assign s_axis_divisor = 44100 * 60 * 3; // song length in samples Binh Minh add here which will update all instances
 
     div_gen_0 divider(
         .s_axis_divisor_tdata(s_axis_divisor), // 44100 samples a second * 60 second * 3 minutes
         .s_axis_dividend_tdata(total_bits), // sample #
         .aclk(Clk),
+        .s_axis_dividend_tvalid(1'b1),
+        .s_axis_divisor_tvalid(1'b1),
         .m_axis_dout_tdata(dividor_res) // multipy by 505 = song_progress
     );
 
@@ -215,6 +217,7 @@ module runman_top(
         if(reset_locked) begin
             playing <= 0;
             track_num <= 0;
+
         end else begin
             play_btn_ms <= Play_btn;
             play_btn_sync <= play_btn_ms;
@@ -233,23 +236,22 @@ module runman_top(
             if(next_btn_prev != next_btn_sync && next_btn_sync == 1) begin
                 track_num <= track_num + 1;
                 if (track_num >= MAX_TRACK_ID) track_num <= 0;
-
                 playing <= 1;
             end
 
             if(prev_btn_prev != prev_btn_sync && prev_btn_sync == 1) begin
                 track_num <= track_num - 1;
                 if (track_num == 0) track_num <= MAX_TRACK_ID;
-
                 playing <= 1;
             end
         end
     end
 
+
 ///// I22 State machine
     logic [31:0] data;
     logic [4:0] bit_counter;
-    logic [31:0] total_bits;
+    logic [39:0] total_bits;
 
     logic [4:0] data_idx;
     assign data_idx = {~bit_counter[4], 4'd15 - bit_counter[3:0]};
@@ -264,7 +266,10 @@ module runman_top(
             I2S_data <= 0;
             I2S_lrck <= 0;
         end else begin
+
+
             bit_counter <= bit_counter + 1;
+
 
             I2S_data <= data[data_idx];
             I2S_lrck <= bit_counter[4];
@@ -275,11 +280,14 @@ module runman_top(
             if(bit_counter >= 5'h1f) begin
                 bit_counter <= 5'd0;
 
-                total_bits <= total_bits + 505;
-                
+
                 // Load 0 if fifo out of data
                 data <= 0;
                 if(~fifo_empty && playing) begin
+                    // if (s_axis_divisor >= total_bits) begin
+                    //     total_bits <= total_bits + 505;
+                    // end
+                    total_bits <= total_bits + 505;
                     fifo_rd_en <= 1;
                     data <= fifo_dout;
                 end
@@ -350,10 +358,8 @@ module runman_top(
         .probe13(track_num),
         .probe14(sdcard_init_i.start_addr),
         .probe15(song_progress),
-        .probe16(dividor_res[47:16]),
-        .probe17(dividor_res[15:0]),
-        .probe18(s_axis_divisor),
-        .probe19(total_bits)
+        .probe16(dividor_res[55:16]),
+        .probe17(dividor_res[15:0])
     );
 
 endmodule
