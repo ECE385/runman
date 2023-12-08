@@ -1,34 +1,34 @@
 `timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer: 
-// 
+// Company:
+// Engineer:
+//
 // Create Date: 11/15/2023 01:33:53 PM
-// Design Name: 
+// Design Name:
 // Module Name: runman_top
-// Project Name: 
-// Target Devices: 
-// Tool Versions: 
-// Description: 
-// 
-// Dependencies: 
-// 
+// Project Name:
+// Target Devices:
+// Tool Versions:
+// Description:
+//
+// Dependencies:
+//
 // Revision:
 // Revision 0.01 - File Created
 // Additional Comments:
-// 
+//
 //////////////////////////////////////////////////////////////////////////////////
 
 
 module runman_top(
     input logic Clk,
     input logic reset_rtl_0, Play_btn, Next_btn, Prev_btn,
-    
+
     output logic [7:0] hex_segA,
     output logic [3:0] hex_gridA,
     output logic [7:0] hex_segB,
     output logic [3:0] hex_gridB,
-    
+
     output logic SD_DQ3,
     output logic SD_CLK,
     input logic SD_DQ0,
@@ -36,7 +36,7 @@ module runman_top(
 
     output logic JA1_P, JA1_N, JA2_P, JA2_N,
     output logic JAB_0, JAB_1, JAB_2, JAB_3, JAB_4, JAB_5,
-    
+
     //HDMI
     output logic hdmi_tmds_clk_n,
     output logic hdmi_tmds_clk_p,
@@ -52,10 +52,10 @@ module runman_top(
     logic reset_locked;
     logic clock_50m_locked;
     logic clock_128fs_locked;
-    
+
     assign reset_locked = reset_rtl_0 || ~clock_50m_locked || ~clock_128fs_locked;
-    
-    
+
+
     clk_wiz_0 clk_wiz_50m(
         .reset(reset_rtl_0),
         .clk_in1(Clk),
@@ -71,7 +71,7 @@ module runman_top(
         .clk_out1(clk_128fs),
         .locked(clock_128fs_locked)
     );
-    
+
     logic [9:0] drawX, drawY, song_progress;
 
     logic hsync, vsync, vde;
@@ -87,16 +87,19 @@ module runman_top(
         .active_nblank(vde),
         .drawX(drawX),
         .drawY(drawY)
-    );   
-     
-    logic dividor_res [39:0];
-    
+    );
+
+    logic [47:0] dividor_res;
+    logic [23:0] s_axis_divisor;
+
+    assign s_axis_divisor = 44100 * 60 * 3;
+
     div_gen_0 divider(
-        S_AXIS_DIVISOR(44100), // 44100 samples a second
-        S_AXIS_DIVIDEND(total_bits), // sample #
-        aclk(Clk),
-        M_AXIS_DOUT(dividor_res) // multipy by 505 = song_progress
-    ); 
+        .s_axis_divisor_tdata(s_axis_divisor), // 44100 samples a second * 60 second * 3 minutes
+        .s_axis_dividend_tdata(total_bits), // sample #
+        .aclk(Clk),
+        .m_axis_dout_tdata(dividor_res) // multipy by 505 = song_progress
+    );
 
     //Real Digital VGA to HDMI converter
     hdmi_tx_0 vga_to_hdmi (
@@ -113,20 +116,20 @@ module runman_top(
         .hsync(hsync),
         .vsync(vsync),
         .vde(vde),
-        
+
         //aux Data (unused)
         .aux0_din(4'b0),
         .aux1_din(4'b0),
         .aux2_din(4'b0),
         .ade(1'b0),
-        
+
         //Differential outputs
-        .TMDS_CLK_P(hdmi_tmds_clk_p),          
-        .TMDS_CLK_N(hdmi_tmds_clk_n),          
-        .TMDS_DATA_P(hdmi_tmds_data_p),         
-        .TMDS_DATA_N(hdmi_tmds_data_n)          
+        .TMDS_CLK_P(hdmi_tmds_clk_p),
+        .TMDS_CLK_N(hdmi_tmds_clk_n),
+        .TMDS_DATA_P(hdmi_tmds_data_p),
+        .TMDS_DATA_N(hdmi_tmds_data_n)
     );
-    
+
 //    always_comb begin
 //        if (vsync == 0) begin
 //            if (525 >= song_progress)  begin
@@ -145,11 +148,13 @@ module runman_top(
 //        else begin
 //            song_progress <= song_progress + 1;
 //        end
-        song_progress <= dividor_res[25:16];
+        integer i;
+        for (i=0; i<10; i=i+1)
+            song_progress[i] <= dividor_res[i+16];
     end
-   
-    
-    //Color Mapper Module   
+
+
+    //Color Mapper Module
     color_mapper color_instance(
         .DrawX(drawX),
         .DrawY(drawY),
@@ -173,9 +178,9 @@ module runman_top(
     assign JAB_4 = 1'bz;
     assign JAB_5 = 1'bz;
 
-    logic fifo_rd_en; //input logic 
-    logic [31 : 0] fifo_dout; //output logic [31 : 0] 
-    logic fifo_empty; // output logic 
+    logic fifo_rd_en; //input logic
+    logic [31 : 0] fifo_dout; //output logic [31 : 0]
+    logic fifo_empty; // output logic
 
 //// Clock generation, fs = 44.1khz
     logic clk_128fs;
@@ -220,7 +225,7 @@ module runman_top(
             next_btn_prev <= next_btn_sync;
 
             prev_btn_ms <= Prev_btn;
-            prev_btn_sync <= prev_btn_ms; 
+            prev_btn_sync <= prev_btn_ms;
             prev_btn_prev <= prev_btn_sync;
 
             if(play_btn_prev != play_btn_sync && play_btn_sync == 1) playing <= ~playing;
@@ -244,7 +249,7 @@ module runman_top(
 ///// I22 State machine
     logic [31:0] data;
     logic [4:0] bit_counter;
-    logic [22:0] total_bits;
+    logic [31:0] total_bits;
 
     logic [4:0] data_idx;
     assign data_idx = {~bit_counter[4], 4'd15 - bit_counter[3:0]};
@@ -260,7 +265,6 @@ module runman_top(
             I2S_lrck <= 0;
         end else begin
             bit_counter <= bit_counter + 1;
-            total_bits <= total_bits + 1;
 
             I2S_data <= data[data_idx];
             I2S_lrck <= bit_counter[4];
@@ -270,6 +274,8 @@ module runman_top(
             // If finished writing word (32 bits), grab next word (2x 16-bit half words, L+R channel)
             if(bit_counter >= 5'h1f) begin
                 bit_counter <= 5'd0;
+
+                total_bits <= total_bits + 505;
                 
                 // Load 0 if fifo out of data
                 data <= 0;
@@ -282,10 +288,10 @@ module runman_top(
     end
 
 /////////
-    
+
     logic [30:0] ram_address;
     logic [15:0] ram_data;
-    
+
     sdcard_init sdcard_init_i(
         .clk50(clk_50),
         .reset(reset_locked),          //starts as soon reset is deasserted
@@ -303,28 +309,28 @@ module runman_top(
 
         .start_addr(31'h3_0000 * 31'd256 * track_num),
 
-        .fifo_rd_en, //input logic 
-        .fifo_rd_clk(clk_32fs), //input logic 
-        .fifo_dout, //output logic [31 : 0] 
-        .fifo_empty // output logic 
+        .fifo_rd_en, //input logic
+        .fifo_rd_clk(clk_32fs), //input logic
+        .fifo_dout, //output logic [31 : 0]
+        .fifo_empty // output logic
     );
-    
+
     HexDriver hex_seg_disA(
         .clk(clk_50),
         .reset(reset_locked),
         .in({{1'b0, track_num}, { 2'b0, song_progress[9:8] }, song_progress[7:4], song_progress[3:0]}),
         .hex_seg(hex_segA),
-        .hex_grid(hex_gridA)  
+        .hex_grid(hex_gridA)
     );
-    
+
     HexDriver hex_seg_disB(
         .clk(clk_50),
         .reset(reset_locked),
         .in({ram_data[15:12], ram_data[11:8], ram_data[7:4], ram_data[3:0]}),
         .hex_seg(hex_segB),
-        .hex_grid(hex_gridB)  
+        .hex_grid(hex_gridB)
     );
-    
+
     ila_0 ila (
         .clk(Clk),
 
@@ -342,7 +348,12 @@ module runman_top(
         .probe11(sdcard_init_i.TEST_counter),
         .probe12({prev_btn_sync, prev_btn_prev, next_btn_sync, next_btn_prev, play_btn_sync, play_btn_prev}),
         .probe13(track_num),
-        .probe14(sdcard_init_i.start_addr)
+        .probe14(sdcard_init_i.start_addr),
+        .probe15(song_progress),
+        .probe16(dividor_res[47:16]),
+        .probe17(dividor_res[15:0]),
+        .probe18(s_axis_divisor),
+        .probe19(total_bits)
     );
-    
+
 endmodule

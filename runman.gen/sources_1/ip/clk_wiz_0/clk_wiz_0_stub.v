@@ -1,10 +1,10 @@
 // Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
 // --------------------------------------------------------------------------------
 // Tool Version: Vivado v.2022.2 (win64) Build 3671981 Fri Oct 14 05:00:03 MDT 2022
-// Date        : Thu Dec  7 12:18:22 2023
-// Host        : ECEB-3022-02 running 64-bit major release  (build 9200)
+// Date        : Thu Dec  7 22:45:32 2023
+// Host        : o running 64-bit major release  (build 9200)
 // Command     : write_verilog -force -mode synth_stub
-//               c:/Users/ramseyv2/repos/runman/runman.gen/sources_1/ip/clk_wiz_0/clk_wiz_0_stub.v
+//               c:/Users/ramva/Repos/runman/runman.gen/sources_1/ip/clk_wiz_0/clk_wiz_0_stub.v
 // Design      : clk_wiz_0
 // Purpose     : Stub declaration of top-level module interface
 // Device      : xc7s50csga324-1
