@@ -116,3 +116,6 @@ set_property -dict {PACKAGE_PIN J2 IOSTANDARD LVCMOS25} [get_ports {Reset}]
 set_property -dict {PACKAGE_PIN J1 IOSTANDARD LVCMOS25} [get_ports {Play_btn}]
 set_property -dict {PACKAGE_PIN G2 IOSTANDARD LVCMOS25} [get_ports {Next_btn}]
 set_property -dict {PACKAGE_PIN H2 IOSTANDARD LVCMOS25} [get_ports {Prev_btn}]
+
+set_property PACKAGE_PIN J10 [get_ports {vp_in}]
+set_property PACKAGE_PIN K9 [get_ports {vn_in}]
