@@ -94,7 +94,7 @@ module runman_top(
     logic [55:0] dividor_res;
     logic [31:0] s_axis_divisor;
 
-    assign s_axis_divisor = 44100 * 60 * 3; // song length in samples Binh Minh add here which will update all instances
+    assign s_axis_divisor = song_size;//44100 * 60 * 3; // song length in samples Binh Minh add here which will update all instances
 
     div_gen_0 divider(
         .s_axis_divisor_tdata(s_axis_divisor), // 44100 samples a second * 60 second * 3 minutes
@@ -215,11 +215,15 @@ module runman_top(
     logic next_btn_ms, next_btn_sync, next_btn_prev;
     logic prev_btn_ms, prev_btn_sync, prev_btn_prev;
 
+    logic new_song;
+
     always_ff @(posedge clk_32fs) begin
+        new_song <= 0;
+
         if(reset_locked) begin
             playing <= 0;
             track_num <= 0;
-
+            new_song <= 1;
         end else begin
             play_btn_ms <= Play_btn;
             play_btn_sync <= play_btn_ms;
@@ -233,18 +237,24 @@ module runman_top(
             prev_btn_sync <= prev_btn_ms;
             prev_btn_prev <= prev_btn_sync;
 
+            if(sample_number >= song_size) begin
+                playing <= 0;
+            end
+
             if(play_btn_prev != play_btn_sync && play_btn_sync == 1) playing <= ~playing;
 
             if(next_btn_prev != next_btn_sync && next_btn_sync == 1) begin
                 track_num <= track_num + 1;
                 if (track_num >= MAX_TRACK_ID) track_num <= 0;
                 playing <= 1;
+                new_song <= 1;
             end
 
             if(prev_btn_prev != prev_btn_sync && prev_btn_sync == 1) begin
                 track_num <= track_num - 1;
                 if (track_num == 0) track_num <= MAX_TRACK_ID;
                 playing <= 1;
+                new_song <= 1;
             end
         end
     end
@@ -280,7 +290,10 @@ xadc_wiz_0 vol_adc (
 
     logic [11:0] volume_level;
 
-    logic [31:0] song_size;
+    logic [31:0] song_size; // In # of samples
+    logic song_load_status; // 0 for load new song (need to update size), 1 for size has been read
+
+    logic [31:0] sample_number;
 
     logic [4:0] data_idx;
     assign data_idx = {~bit_counter[4], 4'd15 - bit_counter[3:0]};
@@ -291,18 +304,22 @@ xadc_wiz_0 vol_adc (
         // data_mult[1] <= (fifo_dout[31:16] * 12'hfff);
         // data_mult[0] <= (fifo_dout[15:0] * volume_level);
 
+        if(new_song) song_load_status <= 0;
+
         if(reset_locked) begin
             bit_counter <= 0;
             total_bits <= 0;
             volume_level <= 0;
 
+            song_size <= 32'hffff_ffff;
+            song_load_status <= 0;
+
+            sample_number <= 0;
+
             I2S_data <= 0;
             I2S_lrck <= 0;
         end else begin
-
-
             bit_counter <= bit_counter + 1;
-
 
             I2S_data <= data[data_idx];
             I2S_lrck <= bit_counter[4];
@@ -317,14 +334,30 @@ xadc_wiz_0 vol_adc (
                 // Load 0 if fifo out of data
                 data <= 0;
                 if(~fifo_empty && playing) begin
+                    sample_number <= sample_number + 1;
+
                     // if (s_axis_divisor >= total_bits) begin
                     //     total_bits <= total_bits + 505;
                     // end
-                    total_bits <= total_bits + 505;
+                    total_bits <= total_bits + 500;
+
+                    // Tell FIFO move to next sample
                     fifo_rd_en <= 1;
+
+                    // Load in volume scalled sound data
                     volume_level <= do_out[15:4];
                     data[31:16] <= signed'(fifo_dout[31:16]) >>> volume_level[11 -: 4];
                     data[15:0] <= signed'(fifo_dout[15:0]) >>> volume_level[11 -: 4];
+
+                    // If song size not loaded, next word should be the song size
+                    if(~song_load_status) begin
+                        song_size[31:16] <= fifo_dout[15:0] >> 2;
+                        song_size[15:0] <= {fifo_dout[1:0], fifo_dout[31:16]};
+                        song_load_status <= 1;
+
+                        total_bits <= 0;
+                        sample_number <= 0;
+                    end
                 end
             end
         end
@@ -394,7 +427,9 @@ xadc_wiz_0 vol_adc (
         .probe14(sdcard_init_i.start_addr),
         .probe15(song_progress),
         .probe16(dividor_res[55:16]),
-        .probe17(dividor_res[15:0])
+        .probe17(dividor_res[15:0]),
+        .probe18(song_size),
+        .probe19({song_load_status, new_song})
     );
 
 endmodule
